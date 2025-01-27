@@ -7,6 +7,10 @@ class Rain {
     required this.h,
   });
 
+  factory Rain.empty() {
+    return Rain(h: 0.0);
+  }
+
   Rain copyWith({
     double? h,
   }) {
@@ -29,7 +33,8 @@ class Rain {
 
   String toJson() => json.encode(toMap());
 
-  factory Rain.fromJson(String source) => Rain.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Rain.fromJson(String source) =>
+      Rain.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() => 'Rain(h: $h)';
@@ -37,9 +42,7 @@ class Rain {
   @override
   bool operator ==(covariant Rain other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.h == h;
+    return other.h == h;
   }
 
   @override

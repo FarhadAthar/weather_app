@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_weather_application/dialog/show_dialog.dart';
 import 'package:flutter_weather_application/weather_data.dart';
 import 'package:flutter_weather_application/weather_template.dart';
 
@@ -33,12 +32,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Future<Weather>? futureWeather;
+  Future<Parent>? future;
   WeatherApiService apiService =
       WeatherApiService(lat: 29.395721, lon: 71.683334);
   void _search() {
     setState(() {
-      futureWeather = apiService.getWeatherData();
+      future = apiService.getWeatherData();
     });
 
     // showDialog(
@@ -59,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
           child: FutureBuilder(
-              future: futureWeather,
+              future: future,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.none) {
                   return const Text('Press the button to fetch data');

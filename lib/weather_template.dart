@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter_weather_application/weather_data.dart';
 import 'package:http/http.dart';
 
@@ -29,10 +28,10 @@ class WeatherApiService extends ApiService {
   String get API_URL =>
       'lat=$lat&lon=$lon&appid=$apiKey';
 
-  Future<Weather> getWeatherData() async {
+  Future<Parent> getWeatherData() async {
     final weather = await fetch();
     if (weather is Map<String, dynamic>) {
-      return Weather.fromMap(weather);
+      return Parent.fromMap(weather);
     } else {
       throw Exception('Failed to load data, invalid response');
       

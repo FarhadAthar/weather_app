@@ -1,8 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter_weather_application/api_attributes/clouds.dart';
 import 'package:flutter_weather_application/api_attributes/forecast.dart';
 import 'package:flutter_weather_application/api_attributes/main_attribute.dart';
@@ -11,142 +9,176 @@ import 'package:flutter_weather_application/api_attributes/sys.dart';
 import 'package:flutter_weather_application/api_attributes/weather_coord.dart';
 import 'package:flutter_weather_application/api_attributes/wind.dart';
 
-class Weather {
+
+class Parent {
   Coord coord;
   List<Forecast> weather;
   String base;
-  MainAttribute main;
-  int visibility;
-  Wind wind;
-  Rain rain;
-  Clouds clouds;
-  int dt;
   Sys sys;
   int timezone;
   int id;
   String name;
   int cod;
-  Weather({
+  Wind wind;
+  MainAttribute main;
+  int visibility;
+  Rain rain;
+  Clouds clouds;
+  int dt;
+  Parent({
     required this.coord,
     required this.weather,
     required this.base,
-    required this.main,
-    required this.visibility,
-    required this.wind,
-    required this.rain,
-    required this.clouds,
-    required this.dt,
     required this.sys,
     required this.timezone,
     required this.id,
     required this.name,
     required this.cod,
+    required this.wind,
+    required this.main,
+    required this.visibility,
+    required this.rain,
+    required this.clouds,
+    required this.dt,
   });
 
-  Weather copyWith({
+  Parent copyWith({
     Coord? coord,
     List<Forecast>? weather,
     String? base,
-    MainAttribute? main,
-    int? visibility,
-    Wind? wind,
-    Rain? rain,
-    Clouds? clouds,
-    int? dt,
     Sys? sys,
     int? timezone,
     int? id,
     String? name,
     int? cod,
+    Wind? wind,
+    MainAttribute? main,
+    int? visibility,
+    Rain? rain,
+    Clouds? clouds,
+    int? dt,
   }) {
-    return Weather(
+    return Parent(
       coord: coord ?? this.coord,
       weather: weather ?? this.weather,
       base: base ?? this.base,
-      main: main ?? this.main,
-      visibility: visibility ?? this.visibility,
-      wind: wind ?? this.wind,
-      rain: rain ?? this.rain,
-      clouds: clouds ?? this.clouds,
-      dt: dt ?? this.dt,
       sys: sys ?? this.sys,
       timezone: timezone ?? this.timezone,
       id: id ?? this.id,
       name: name ?? this.name,
       cod: cod ?? this.cod,
+      wind: wind ?? this.wind,
+      main: main ?? this.main,
+      visibility: visibility ?? this.visibility,
+      rain: rain ?? this.rain,
+      clouds: clouds ?? this.clouds,
+      dt: dt ?? this.dt,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'coord': coord.toMap(),
-      'weather': weather.map((x) => x.toMap()).toList(),
-      'base': base,
-      'main': main.toMap(),
-      'visibility': visibility,
-      'wind': wind.toMap(),
-      'rain': rain.toMap(),
-      'clouds': clouds.toMap(),
-      'dt': dt,
-      'sys': sys.toMap(),
-      'timezone': timezone,
-      'id': id,
-      'name': name,
-      'cod': cod,
-    };
+    final result = <String, dynamic>{};
+
+    result.addAll({'coord': coord.toMap()});
+    result.addAll({'weather': weather.map((x) => x.toMap()).toList()});
+    result.addAll({'base': base});
+    result.addAll({'sys': sys.toMap()});
+    result.addAll({'timezone': timezone});
+    result.addAll({'id': id});
+    result.addAll({'name': name});
+    result.addAll({'cod': cod});
+    result.addAll({'wind': wind.toMap()});
+    result.addAll({'main': main.toMap()});
+    result.addAll({'visibility': visibility});
+    result.addAll({'rain': rain.toMap()});
+    result.addAll({'clouds': clouds.toMap()});
+    result.addAll({'dt': dt});
+
+    return result;
   }
 
-  factory Weather.fromMap(Map<String, dynamic> map) {
-    return Weather(
-      coord: Coord.fromMap(map['coord'] as Map<String, dynamic>),
-      weather: List<Forecast>.from(
-        (map['weather'] as List<dynamic>).map<Forecast>(
-          (x) => Forecast.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
-      base: map['base'] as String,
-      main: MainAttribute.fromMap(map['main'] as Map<String, dynamic>),
-      visibility: map['visibility'] as int,
-      wind: Wind.fromMap(map['wind'] as Map<String, dynamic>),
-      rain: Rain.fromMap(map['rain'] as Map<String, dynamic>),
-      clouds: Clouds.fromMap(map['clouds'] as Map<String, dynamic>),
-      dt: map['dt'] as int,
-      sys: Sys.fromMap(map['sys'] as Map<String, dynamic>),
-      timezone: map['timezone'] as int,
-      id: map['id'] as int,
-      name: map['name'] as String,
-      cod: map['cod'] as int,
+  // factory Parent.fromMap(Map<String, dynamic> map) {
+  //   return Parent(
+  //     coord: Coord.fromMap(map['coord']),
+  //     weather:
+  //         List<Weather>.from(map['weather']?.map((x) => Weather.fromMap(x))),
+  //     base: map['base'] ?? '',
+  //     sys: Sys.fromMap(map['sys']),
+  //     timezone: map['timezone']?.toInt() ?? 0,
+  //     id: map['id']?.toInt() ?? 0,
+  //     name: map['name'] ?? '',
+  //     cod: map['cod']?.toInt() ?? 0,
+  //     wind: Wind.fromMap(map['wind']),
+  //     main: Main.fromMap(map['main']),
+  //     visibility: map['visibility']?.toInt() ?? 0,
+  //     rain: Rain.fromMap(map['rain']),
+  //     clouds: Clouds.fromMap(map['clouds']),
+  //     dt: map['dt']?.toInt() ?? 0,
+  //   );
+  // }
+  factory Parent.fromMap(Map<String, dynamic> map) {
+    if (map == null) {
+      throw Exception("Input map cannot be null");
+    }
+
+    return Parent(
+      coord: map['coord'] != null
+          ? Coord.fromMap(map['coord'])
+          : throw Exception("Missing coord"),
+      weather: map['weather'] != null
+          ? List<Forecast>.from(map['weather']?.map((x) => Forecast.fromMap(x)))
+          : [],
+      base: map['base'] ?? '',
+      sys: map['sys'] != null
+          ? Sys.fromMap(map['sys'])
+          : throw Exception("Missing sys"),
+      timezone: map['timezone']?.toInt() ?? 0,
+      id: map['id']?.toInt() ?? 0,
+      name: map['name'] ?? '',
+      cod: map['cod']?.toInt() ?? 0,
+      wind: map['wind'] != null
+          ? Wind.fromMap(map['wind'])
+          : throw Exception("Missing wind"),
+      main: map['main'] != null
+          ? MainAttribute.fromMap(map['main'])
+          : throw Exception("Missing main"),
+      visibility: map['visibility']?.toInt() ?? 0,
+      rain: map['rain'] != null ? Rain.fromMap(map['rain']) : Rain.empty(),
+      clouds: map['clouds'] != null
+          ? Clouds.fromMap(map['clouds'])
+          : throw Exception("Missing clouds"),
+      dt: map['dt']?.toInt() ?? 0,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Weather.fromJson(String source) =>
-      Weather.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Parent.fromJson(String source) => Parent.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'Weather(coord: $coord, weather: $weather, base: $base, main: $main, visibility: $visibility, wind: $wind, rain: $rain, clouds: $clouds, dt: $dt, sys: $sys, timezone: $timezone, id: $id, name: $name, cod: $cod)';
+    return 'Parent(coord: $coord, weather: $weather, base: $base, sys: $sys, timezone: $timezone, id: $id, name: $name, cod: $cod, wind: $wind, main: $main, visibility: $visibility, rain: $rain, clouds: $clouds, dt: $dt)';
   }
 
   @override
-  bool operator ==(covariant Weather other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other.coord == coord &&
+    return other is Parent &&
+        other.coord == coord &&
         listEquals(other.weather, weather) &&
         other.base == base &&
-        other.main == main &&
-        other.visibility == visibility &&
-        other.wind == wind &&
-        other.rain == rain &&
-        other.clouds == clouds &&
-        other.dt == dt &&
         other.sys == sys &&
         other.timezone == timezone &&
         other.id == id &&
         other.name == name &&
-        other.cod == cod;
+        other.cod == cod &&
+        other.wind == wind &&
+        other.main == main &&
+        other.visibility == visibility &&
+        other.rain == rain &&
+        other.clouds == clouds &&
+        other.dt == dt;
   }
 
   @override
@@ -154,16 +186,16 @@ class Weather {
     return coord.hashCode ^
         weather.hashCode ^
         base.hashCode ^
-        main.hashCode ^
-        visibility.hashCode ^
-        wind.hashCode ^
-        rain.hashCode ^
-        clouds.hashCode ^
-        dt.hashCode ^
         sys.hashCode ^
         timezone.hashCode ^
         id.hashCode ^
         name.hashCode ^
-        cod.hashCode;
+        cod.hashCode ^
+        wind.hashCode ^
+        main.hashCode ^
+        visibility.hashCode ^
+        rain.hashCode ^
+        clouds.hashCode ^
+        dt.hashCode;
   }
 }
