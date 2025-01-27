@@ -3,7 +3,7 @@ import 'package:flutter_weather_application/weather_data.dart';
 import 'package:flutter_weather_application/weather_template.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -12,84 +12,113 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'W E A T H E R'),
+      home: WeatherScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+class WeatherScreen extends StatefulWidget {
+  const WeatherScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _WeatherScreenState createState() => _WeatherScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  Future<Parent>? future;
-  WeatherApiService apiService =
-      WeatherApiService(lat: 29.395721, lon: 71.683334);
-  void _search() {
+class _WeatherScreenState extends State<WeatherScreen> {
+  final TextEditingController latController = TextEditingController();
+  final TextEditingController lonController = TextEditingController();
+  String weatherInfo = '';
+  bool isLoading = false;
+
+  Future<void> getWeatherData(double lat, double lon) async {
     setState(() {
-      future = apiService.getWeatherData();
+      isLoading = true;
+      weatherInfo = '';
     });
 
-    // showDialog(
-    //   context: context,
-    //   builder: (BuildContext context) {
-    //     return const CityDialog();
-    //   },
-    // );
+    try {
+      final apiService = MyAPIService(lat: lat, lon: lon);
+      WeatherAPI weatherData = await apiService.getWeatherData();
+
+      setState(() {
+        isLoading = false;
+        weatherInfo = '''
+        City: ${weatherData.name}
+        Temperature: ${weatherData.main?.temp}°C
+        Weather: ${weatherData.weather?.first.description}
+        Humidity: ${weatherData.main?.humidity}%
+        Wind Speed: ${weatherData.wind?.speed} m/s
+        ''';
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        weatherInfo = 'Error: ${e.toString()}';
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blue,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text('Open Weather API'),
         centerTitle: true,
+        backgroundColor: Colors.blueAccent,
       ),
-      body: Center(
-          child: FutureBuilder(
-              future: future,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.none) {
-                  return const Text('Press the button to fetch data');
-                } else if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextField(
+              controller: latController,
+              decoration: InputDecoration(
+                labelText: 'Enter Latitude',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: lonController,
+              decoration: InputDecoration(
+                labelText: 'Enter Longitude',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              style:
+                  ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
+              onPressed: () {
+                final lat = double.tryParse(latController.text);
+                final lon = double.tryParse(lonController.text);
+
+                if (lat != null && lon != null) {
+                  getWeatherData(lat, lon);
                 } else {
-                  if (snapshot.hasError) {
-                    return Text('Error : ${snapshot.error}');
-                  } else {
-                    return Column(
-                      children: [
-                        Text(
-                            'Temperature: ${snapshot.data!.main.temp.toString()}'),
-                        Text(
-                            'Humidity: ${snapshot.data!.main.humidity.toString()}'),
-                        Text(
-                            'Pressure: ${snapshot.data!.main.pressure.toString()}'),
-                        Text(
-                            'Wind Speed: ${snapshot.data!.wind.speed.toString()}'),
-                        Text(
-                            'Wind Degree: ${snapshot.data!.wind.deg.toString()}'),
-                      ],
-                    );
-                  }
+                  setState(() {
+                    weatherInfo = 'Please enter valid latitude and longitude';
+                  });
                 }
-              })),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _search,
-        tooltip: 'Increment',
-        child: const Icon(Icons.search),
+              },
+              child: Text(
+                'Get Weather',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            SizedBox(height: 20),
+            isLoading
+                ? CircularProgressIndicator()
+                : Text(
+                    weatherInfo,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                  ),
+          ],
+        ),
       ),
     );
   }

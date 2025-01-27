@@ -1,201 +1,214 @@
-import 'dart:convert';
+class WeatherAPI {
+  Coord? coord;
+  List<Weather>? weather;
+  Main? main;
+  Wind? wind;
+  Clouds? clouds;
+  Sys? sys;
+  int? timezone;
+  int? id;
+  String? name;
+  int? cod;
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter_weather_application/api_attributes/clouds.dart';
-import 'package:flutter_weather_application/api_attributes/forecast.dart';
-import 'package:flutter_weather_application/api_attributes/main_attribute.dart';
-import 'package:flutter_weather_application/api_attributes/rain.dart';
-import 'package:flutter_weather_application/api_attributes/sys.dart';
-import 'package:flutter_weather_application/api_attributes/weather_coord.dart';
-import 'package:flutter_weather_application/api_attributes/wind.dart';
+  WeatherAPI(
+      {this.coord,
+      this.weather,
+      this.main,
+      this.wind,
+      this.clouds,
+      this.sys,
+      this.timezone,
+      this.id,
+      this.name,
+      this.cod});
 
+  WeatherAPI.fromJson(Map<String, dynamic> json) {
+    coord = json['coord'] != null ? Coord.fromJson(json['coord']) : null;
+    if (json['weather'] != null) {
+      weather = <Weather>[];
+      json['weather'].forEach((v) {
+        weather!.add(Weather.fromJson(v));
+      });
+    }
+    main = json['main'] != null ? Main.fromJson(json['main']) : null;
+    wind = json['wind'] != null ? Wind.fromJson(json['wind']) : null;
+    clouds = json['clouds'] != null ? Clouds.fromJson(json['clouds']) : null;
+    sys = json['sys'] != null ? Sys.fromJson(json['sys']) : null;
+    timezone = json['timezone'];
+    id = json['id'];
+    name = json['name'];
+    cod = json['cod'];
+  }
 
-class Parent {
-  Coord coord;
-  List<Forecast> weather;
-  String base;
-  Sys sys;
-  int timezone;
-  int id;
-  String name;
-  int cod;
-  Wind wind;
-  MainAttribute main;
-  int visibility;
-  Rain rain;
-  Clouds clouds;
-  int dt;
-  Parent({
-    required this.coord,
-    required this.weather,
-    required this.base,
-    required this.sys,
-    required this.timezone,
-    required this.id,
-    required this.name,
-    required this.cod,
-    required this.wind,
-    required this.main,
-    required this.visibility,
-    required this.rain,
-    required this.clouds,
-    required this.dt,
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (coord != null) {
+      data['coord'] = coord!.toJson();
+    }
+    if (weather != null) {
+      data['weather'] = weather!.map((v) => v.toJson()).toList();
+    }
+    if (main != null) {
+      data['main'] = main!.toJson();
+    }
+    if (wind != null) {
+      data['wind'] = wind!.toJson();
+    }
+    if (clouds != null) {
+      data['clouds'] = clouds!.toJson();
+    }
+    if (sys != null) {
+      data['sys'] = sys!.toJson();
+    }
+    data['timezone'] = timezone;
+    data['id'] = id;
+    data['name'] = name;
+    data['cod'] = cod;
+    return data;
+  }
+}
+
+class Coord {
+  double? lon;
+  double? lat;
+
+  Coord({this.lon, this.lat});
+
+  Coord.fromJson(Map<String, dynamic> json) {
+    lon = (json['lon'] is int) ? (json['lon'] as int).toDouble() : json['lon'];
+    lat = (json['lat'] is int) ? (json['lat'] as int).toDouble() : json['lat'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['lon'] = this.lon;
+    data['lat'] = this.lat;
+    return data;
+  }
+}
+
+class Weather {
+  int? id;
+  String? main;
+  String? description;
+  String? icon;
+
+  Weather({this.id, this.main, this.description, this.icon});
+
+  Weather.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    main = json['main'];
+    description = json['description'];
+    icon = json['icon'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['main'] = main;
+    data['description'] = description;
+    data['icon'] = icon;
+    return data;
+  }
+}
+
+class Main {
+  double? temp;
+  double? feelsLike;
+  double? tempMin;
+  double? tempMax;
+  int? pressure;
+  int? humidity;
+
+  Main({
+    this.temp,
+    this.feelsLike,
+    this.tempMin,
+    this.tempMax,
+    this.pressure,
+    this.humidity,
   });
 
-  Parent copyWith({
-    Coord? coord,
-    List<Forecast>? weather,
-    String? base,
-    Sys? sys,
-    int? timezone,
-    int? id,
-    String? name,
-    int? cod,
-    Wind? wind,
-    MainAttribute? main,
-    int? visibility,
-    Rain? rain,
-    Clouds? clouds,
-    int? dt,
-  }) {
-    return Parent(
-      coord: coord ?? this.coord,
-      weather: weather ?? this.weather,
-      base: base ?? this.base,
-      sys: sys ?? this.sys,
-      timezone: timezone ?? this.timezone,
-      id: id ?? this.id,
-      name: name ?? this.name,
-      cod: cod ?? this.cod,
-      wind: wind ?? this.wind,
-      main: main ?? this.main,
-      visibility: visibility ?? this.visibility,
-      rain: rain ?? this.rain,
-      clouds: clouds ?? this.clouds,
-      dt: dt ?? this.dt,
-    );
+  Main.fromJson(Map<String, dynamic> json) {
+    temp =
+        (json['temp'] is int) ? (json['temp'] as int).toDouble() : json['temp'];
+    feelsLike = (json['feels_like'] is int)
+        ? (json['feels_like'] as int).toDouble()
+        : json['feels_like'];
+    tempMin = (json['temp_min'] is int)
+        ? (json['temp_min'] as int).toDouble()
+        : json['temp_min'];
+    tempMax = (json['temp_max'] is int)
+        ? (json['temp_max'] as int).toDouble()
+        : json['temp_max'];
+    pressure = json['pressure'];
+    humidity = json['humidity'];
   }
 
-  Map<String, dynamic> toMap() {
-    final result = <String, dynamic>{};
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['temp'] = temp;
+    data['feels_like'] = feelsLike;
+    data['temp_min'] = tempMin;
+    data['temp_max'] = tempMax;
+    data['pressure'] = pressure;
+    data['humidity'] = humidity;
+    return data;
+  }
+}
 
-    result.addAll({'coord': coord.toMap()});
-    result.addAll({'weather': weather.map((x) => x.toMap()).toList()});
-    result.addAll({'base': base});
-    result.addAll({'sys': sys.toMap()});
-    result.addAll({'timezone': timezone});
-    result.addAll({'id': id});
-    result.addAll({'name': name});
-    result.addAll({'cod': cod});
-    result.addAll({'wind': wind.toMap()});
-    result.addAll({'main': main.toMap()});
-    result.addAll({'visibility': visibility});
-    result.addAll({'rain': rain.toMap()});
-    result.addAll({'clouds': clouds.toMap()});
-    result.addAll({'dt': dt});
+class Wind {
+  double? speed;
+  int? deg;
 
-    return result;
+  Wind({this.speed, this.deg});
+
+  Wind.fromJson(Map<String, dynamic> json) {
+    speed = (json['speed'] is int)
+        ? (json['speed'] as int).toDouble()
+        : json['speed'];
+    deg = json['deg'];
   }
 
-  // factory Parent.fromMap(Map<String, dynamic> map) {
-  //   return Parent(
-  //     coord: Coord.fromMap(map['coord']),
-  //     weather:
-  //         List<Weather>.from(map['weather']?.map((x) => Weather.fromMap(x))),
-  //     base: map['base'] ?? '',
-  //     sys: Sys.fromMap(map['sys']),
-  //     timezone: map['timezone']?.toInt() ?? 0,
-  //     id: map['id']?.toInt() ?? 0,
-  //     name: map['name'] ?? '',
-  //     cod: map['cod']?.toInt() ?? 0,
-  //     wind: Wind.fromMap(map['wind']),
-  //     main: Main.fromMap(map['main']),
-  //     visibility: map['visibility']?.toInt() ?? 0,
-  //     rain: Rain.fromMap(map['rain']),
-  //     clouds: Clouds.fromMap(map['clouds']),
-  //     dt: map['dt']?.toInt() ?? 0,
-  //   );
-  // }
-  factory Parent.fromMap(Map<String, dynamic> map) {
-    if (map == null) {
-      throw Exception("Input map cannot be null");
-    }
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['speed'] = speed;
+    data['deg'] = deg;
+    return data;
+  }
+}
 
-    return Parent(
-      coord: map['coord'] != null
-          ? Coord.fromMap(map['coord'])
-          : throw Exception("Missing coord"),
-      weather: map['weather'] != null
-          ? List<Forecast>.from(map['weather']?.map((x) => Forecast.fromMap(x)))
-          : [],
-      base: map['base'] ?? '',
-      sys: map['sys'] != null
-          ? Sys.fromMap(map['sys'])
-          : throw Exception("Missing sys"),
-      timezone: map['timezone']?.toInt() ?? 0,
-      id: map['id']?.toInt() ?? 0,
-      name: map['name'] ?? '',
-      cod: map['cod']?.toInt() ?? 0,
-      wind: map['wind'] != null
-          ? Wind.fromMap(map['wind'])
-          : throw Exception("Missing wind"),
-      main: map['main'] != null
-          ? MainAttribute.fromMap(map['main'])
-          : throw Exception("Missing main"),
-      visibility: map['visibility']?.toInt() ?? 0,
-      rain: map['rain'] != null ? Rain.fromMap(map['rain']) : Rain.empty(),
-      clouds: map['clouds'] != null
-          ? Clouds.fromMap(map['clouds'])
-          : throw Exception("Missing clouds"),
-      dt: map['dt']?.toInt() ?? 0,
-    );
+class Clouds {
+  int? all;
+
+  Clouds({this.all});
+
+  Clouds.fromJson(Map<String, dynamic> json) {
+    all = json['all'];
   }
 
-  String toJson() => json.encode(toMap());
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['all'] = all;
+    return data;
+  }
+}
 
-  factory Parent.fromJson(String source) => Parent.fromMap(json.decode(source));
+class Sys {
+  int? sunrise;
+  int? sunset;
 
-  @override
-  String toString() {
-    return 'Parent(coord: $coord, weather: $weather, base: $base, sys: $sys, timezone: $timezone, id: $id, name: $name, cod: $cod, wind: $wind, main: $main, visibility: $visibility, rain: $rain, clouds: $clouds, dt: $dt)';
+  Sys({this.sunrise, this.sunset});
+
+  Sys.fromJson(Map<String, dynamic> json) {
+    sunrise = json['sunrise'];
+    sunset = json['sunset'];
   }
 
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is Parent &&
-        other.coord == coord &&
-        listEquals(other.weather, weather) &&
-        other.base == base &&
-        other.sys == sys &&
-        other.timezone == timezone &&
-        other.id == id &&
-        other.name == name &&
-        other.cod == cod &&
-        other.wind == wind &&
-        other.main == main &&
-        other.visibility == visibility &&
-        other.rain == rain &&
-        other.clouds == clouds &&
-        other.dt == dt;
-  }
-
-  @override
-  int get hashCode {
-    return coord.hashCode ^
-        weather.hashCode ^
-        base.hashCode ^
-        sys.hashCode ^
-        timezone.hashCode ^
-        id.hashCode ^
-        name.hashCode ^
-        cod.hashCode ^
-        wind.hashCode ^
-        main.hashCode ^
-        visibility.hashCode ^
-        rain.hashCode ^
-        clouds.hashCode ^
-        dt.hashCode;
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['sunrise'] = sunrise;
+    data['sunset'] = sunset;
+    return data;
   }
 }
